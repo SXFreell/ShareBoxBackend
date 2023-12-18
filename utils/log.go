@@ -17,7 +17,6 @@ var (
 func init() {
 	log_file, err := rotatelogs.New(
 		"./log/%Y%m%d_%H:%M:%S.log",
-		rotatelogs.WithLinkName("./latest.log"),
 		rotatelogs.WithRotationTime(30*time.Minute),
 	)
 
