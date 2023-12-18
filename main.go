@@ -1,12 +1,32 @@
 package main
 
-import "github.com/kataras/iris/v12"
+import (
+	"sharebox/utils"
+
+	"github.com/kataras/iris/v12"
+)
 
 func main() {
-	app := iris.New()
+	// Web server
+	webServer := iris.New()
+	webServer.Use(iris.Compression)
+	webServer.Use(corsMiddleware())
+	webServer.HandleDir("/", "./static/dist")
+	webServer.OnAnyErrorCode(func(ctx iris.Context) {
+		if ctx.GetStatusCode() == iris.StatusNotFound {
+			ctx.ServeFile("./static/dist/index.html")
+		} else {
+			ctx.WriteString(iris.StatusText(ctx.GetStatusCode()))
+		}
+	})
 
-	// 静态文件
-	app.HandleDir("/", "./static/dist")
+	// webServer.Get("/{any:path}", func(ctx iris.Context) {
+
+	// 	ctx.ServeFile("./static/dist/index.html")
+	// })
+	go func() {
+		webServer.Listen(":41251")
+	}()
 
 	// booksAPI := app.Party("/books")
 	// {
@@ -18,7 +38,30 @@ func main() {
 	// 	booksAPI.Post("/", create)
 	// }
 
+	// API
+	app := iris.New()
+
+	app.Get("/api", func(ctx iris.Context) {
+		ctx.JSON(iris.Map{"message": "Hello Iris!"})
+		utils.Log.Info("Hello Iris!")
+	})
+
 	app.Listen(":41250")
+}
+
+// CORS Middleware
+func corsMiddleware() iris.Handler {
+	return func(ctx iris.Context) {
+		ctx.Header("Access-Control-Allow-Origin", "*")
+		ctx.Header("Access-Control-Allow-Credentials", "true")
+		ctx.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin")
+		ctx.Header("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
+		if ctx.Method() == iris.MethodOptions {
+            ctx.StatusCode(iris.StatusNoContent)
+            return
+        }
+		ctx.Next()
+	}
 }
 
 // // Book example.
