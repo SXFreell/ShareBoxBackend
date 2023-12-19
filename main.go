@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "sharebox/dao"
+	"sharebox/service"
 	"sharebox/utils"
 
 	"github.com/kataras/iris/v12"
@@ -21,10 +22,6 @@ func main() {
 		}
 	})
 
-	// webServer.Get("/{any:path}", func(ctx iris.Context) {
-
-	// 	ctx.ServeFile("./static/dist/index.html")
-	// })
 	go func() {
 		webServer.Listen(":41251")
 	}()
@@ -41,6 +38,23 @@ func main() {
 
 	// API
 	app := iris.New()
+
+	authAPI := app.Party("/auth")
+	{
+		authAPI.Post("/login", service.Login)
+		// authAPI.Post("/register", register)
+		authAPI.Post("/logout", service.Logout)
+	}
+
+	getAPI := app.Party("/get")
+	{
+		getAPI.Get("/", service.GetSomething)
+	}
+
+	setAPI := app.Party("/set")
+	{
+		setAPI.Post("/", service.SetSomething)
+	}
 
 	app.Get("/api", func(ctx iris.Context) {
 		ctx.JSON(iris.Map{"message": "Hello Iris!"})

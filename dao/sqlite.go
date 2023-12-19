@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"os"
 	"sharebox/utils"
 
 	"database/sql"
@@ -9,9 +10,28 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var ()
-
 func init() {
+	// 检测根目录是否有data文件夹
+	_, err := os.Stat("./data")
+	if err != nil {
+		if os.IsNotExist(err) {
+			err := os.MkdirAll("./data", os.ModePerm)
+			if err != nil {
+				utils.Log.WithFields(logrus.Fields{
+					"err": err,
+				}).Error("Create data folder failed")
+			} else {
+				utils.Log.Info("Create data folder success")
+			}
+		} else {
+			utils.Log.WithFields(logrus.Fields{
+				"err": err,
+			}).Error("Stat data folder failed")
+		}
+	} else {
+		utils.Log.Info("Data folder exists")
+	}
+
 	db, err := sql.Open("sqlite3", "./data/data.db")
 	if err != nil {
 		utils.Log.WithFields(logrus.Fields{
@@ -64,6 +84,16 @@ func ensureTableExists(db *sql.DB, tableName string) (bool, error) {
 	}
 }
 
+func openDatabase() (*sql.DB, error) {
+	db, err := sql.Open("sqlite3", "./data/data.db")
+	if err != nil {
+		utils.Log.WithFields(logrus.Fields{
+			"err": err,
+		}).Error("Open database failed")
+	}
+	return db, err
+}
+
 func createTable(db *sql.DB, tableName string) error {
 	query := ""
 	switch tableName {
@@ -90,5 +120,49 @@ func createTable(db *sql.DB, tableName string) error {
 			"tableName": tableName,
 		}).Info("Create table success")
 		return nil
+	}
+}
+
+func QuerySQL(query string, args ...interface{}) (*sql.Rows, error) {
+	db, err := openDatabase()
+	if err != nil {
+		utils.Log.WithFields(logrus.Fields{
+			"err": err,
+		}).Error("Open database failed")
+		return nil, err
+	}
+	rows, err := db.Query(query, args...)
+	if err != nil {
+		utils.Log.WithFields(logrus.Fields{
+			"err": err,
+		}).Error("Query failed")
+		db.Close()
+		return nil, err
+	} else {
+		utils.Log.Info("Query success")
+		db.Close()
+		return rows, nil
+	}
+}
+
+func ExecSQL(query string, args ...interface{}) (sql.Result, error) {
+	db, err := openDatabase()
+	if err != nil {
+		utils.Log.WithFields(logrus.Fields{
+			"err": err,
+		}).Error("Open database failed")
+		return nil, err
+	}
+	result, err := db.Exec(query, args...)
+	if err != nil {
+		utils.Log.WithFields(logrus.Fields{
+			"err": err,
+		}).Error("Exec failed")
+		db.Close()
+		return nil, err
+	} else {
+		utils.Log.Info("Exec success")
+		db.Close()
+		return result, nil
 	}
 }
