@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "sharebox/dao"
 	"sharebox/utils"
 
 	"github.com/kataras/iris/v12"
@@ -57,9 +58,9 @@ func corsMiddleware() iris.Handler {
 		ctx.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin")
 		ctx.Header("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
 		if ctx.Method() == iris.MethodOptions {
-            ctx.StatusCode(iris.StatusNoContent)
-            return
-        }
+			ctx.StatusCode(iris.StatusNoContent)
+			return
+		}
 		ctx.Next()
 	}
 }

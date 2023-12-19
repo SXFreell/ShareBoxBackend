@@ -2,10 +2,10 @@ package utils
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"time"
-	"io"
-	
+
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/sirupsen/logrus"
 )
@@ -25,5 +25,5 @@ func init() {
 	}
 
 	Log.SetOutput(io.MultiWriter(log_file, os.Stdout))
-	Log.SetFormatter(&logrus.TextFormatter{ ForceQuote: true, TimestampFormat: "2006-01-02 15:04:05.000", FullTimestamp: true})
+	Log.SetFormatter(&logrus.JSONFormatter{TimestampFormat: "2006-01-02 15:04:05.000"})
 }

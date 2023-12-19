@@ -29,6 +29,7 @@ require (
 	github.com/lestrrat-go/strftime v1.0.6 // indirect
 	github.com/mailgun/raymond/v2 v2.0.48 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/mattn/go-sqlite3 v1.14.19
 	github.com/microcosm-cc/bluemonday v1.0.26 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
