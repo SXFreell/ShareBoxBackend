@@ -38,6 +38,11 @@ func main() {
 
 	// API
 	app := iris.New()
+	// app.Use(iris.Compression)
+	app.Use(corsMiddleware())
+	app.Options("{root:path}", func(ctx iris.Context) {
+		ctx.StatusCode(iris.StatusNoContent)
+	})
 
 	authAPI := app.Party("/auth")
 	{
@@ -68,7 +73,7 @@ func main() {
 func corsMiddleware() iris.Handler {
 	return func(ctx iris.Context) {
 		ctx.Header("Access-Control-Allow-Origin", "*")
-		ctx.Header("Access-Control-Allow-Credentials", "true")
+		// ctx.Header("Access-Control-Allow-Credentials", "true")
 		ctx.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin")
 		ctx.Header("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
 		if ctx.Method() == iris.MethodOptions {
