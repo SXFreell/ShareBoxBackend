@@ -1,5 +1,7 @@
 package model
 
+// Set
+// Set Request
 type SetReq struct {
 	Type           string     `json:"type"`
 	SetTextContent SetTextReq `json:"set_text_content"`
@@ -15,6 +17,16 @@ type SetFileReq struct {
 	Content string `json:"content"`
 	Expires int    `json:"expires"`
 }
+
+// Set Response
+
+// Get
+// Get Request
+type GetReq struct {
+	Code string `json:"code"`
+}
+
+// Get Response
 
 // CREATE TABLE IF NOT EXISTS text (
 // id INTEGER PRIMARY KEY AUTOINCREMENT,

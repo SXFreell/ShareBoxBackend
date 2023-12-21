@@ -53,7 +53,7 @@ func main() {
 
 	getAPI := app.Party("/get")
 	{
-		getAPI.Get("/", service.GetSomething)
+		getAPI.Post("/", service.GetSomething)
 	}
 
 	setAPI := app.Party("/set")
