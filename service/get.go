@@ -71,5 +71,5 @@ func GetSomething(ctx iris.Context) {
 			"message": "Not found",
 		})
 	}
-
+	result.Close()
 }

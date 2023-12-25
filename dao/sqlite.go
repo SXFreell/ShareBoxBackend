@@ -10,6 +10,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+var (
+	db *sql.DB
+)
+
 func init() {
 	// 检测根目录是否有data文件夹
 	_, err := os.Stat("./data")
@@ -32,7 +36,7 @@ func init() {
 		utils.Log.Info("Data folder exists")
 	}
 
-	db, err := sql.Open("sqlite3", "./data/data.db")
+	db, err = sql.Open("sqlite3", "./data/data.db")
 	if err != nil {
 		utils.Log.WithFields(logrus.Fields{
 			"err": err,
@@ -40,18 +44,17 @@ func init() {
 	} else {
 		utils.Log.Info("Open database success")
 	}
-	defer db.Close()
 
 	// Check tables
 	tables := []string{"user", "text", "file"}
 	for _, table := range tables {
-		exists, err := ensureTableExists(db, table)
+		exists, err := ensureTableExists(table)
 		if err != nil {
 			utils.Log.WithFields(logrus.Fields{
 				"err": err,
 			}).Error("Ensure table exists failed")
 		} else if !exists {
-			err := createTable(db, table)
+			err := createTable(table)
 			if err != nil {
 				utils.Log.WithFields(logrus.Fields{
 					"err": err,
@@ -61,7 +64,7 @@ func init() {
 	}
 }
 
-func ensureTableExists(db *sql.DB, tableName string) (bool, error) {
+func ensureTableExists(tableName string) (bool, error) {
 	query := "SELECT name FROM sqlite_master WHERE type='table' AND name=?"
 	var name string
 	err := db.QueryRow(query, tableName).Scan(&name)
@@ -84,17 +87,7 @@ func ensureTableExists(db *sql.DB, tableName string) (bool, error) {
 	}
 }
 
-func openDatabase() (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", "./data/data.db")
-	if err != nil {
-		utils.Log.WithFields(logrus.Fields{
-			"err": err,
-		}).Error("Open database failed")
-	}
-	return db, err
-}
-
-func createTable(db *sql.DB, tableName string) error {
+func createTable(tableName string) error {
 	query := ""
 	switch tableName {
 	case "user":
@@ -124,45 +117,27 @@ func createTable(db *sql.DB, tableName string) error {
 }
 
 func QuerySQL(query string, args ...interface{}) (*sql.Rows, error) {
-	db, err := openDatabase()
-	if err != nil {
-		utils.Log.WithFields(logrus.Fields{
-			"err": err,
-		}).Error("Open database failed")
-		return nil, err
-	}
 	rows, err := db.Query(query, args...)
 	if err != nil {
 		utils.Log.WithFields(logrus.Fields{
 			"err": err,
 		}).Error("Query failed")
-		db.Close()
 		return nil, err
 	} else {
 		utils.Log.Info("Query success")
-		db.Close()
 		return rows, nil
 	}
 }
 
 func ExecSQL(query string, args ...interface{}) (sql.Result, error) {
-	db, err := openDatabase()
-	if err != nil {
-		utils.Log.WithFields(logrus.Fields{
-			"err": err,
-		}).Error("Open database failed")
-		return nil, err
-	}
 	result, err := db.Exec(query, args...)
 	if err != nil {
 		utils.Log.WithFields(logrus.Fields{
 			"err": err,
 		}).Error("Exec failed")
-		db.Close()
 		return nil, err
 	} else {
 		utils.Log.Info("Exec success")
-		db.Close()
 		return result, nil
 	}
 }

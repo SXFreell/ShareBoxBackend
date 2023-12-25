@@ -40,6 +40,7 @@ func SetSomething(ctx iris.Context) {
 				}).Error("Select SQL failed")
 				return
 			} else if row.Next() {
+				row.Close()
 				continue
 			} else {
 				break
