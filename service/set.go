@@ -45,11 +45,12 @@ func SetSomething(ctx iris.Context) {
 				break
 			}
 		}
-		result, err := dao.ExecSQL("INSERT INTO text (uid, code, content, expires, create_time, update_time) VALUES (?, ?, ?, ?, ?, ?)",
+		_, err := dao.ExecSQL("INSERT INTO text (uid, code, content, expires, pickup_count, create_time, update_time) VALUES (?, ?, ?, ?, ?, ?, ?)",
 			"uid000000",
 			code,
 			request.SetTextContent.Content,
 			request.SetTextContent.Expires,
+			request.SetTextContent.PickupCount,
 			createTime,
 			createTime,
 		)
@@ -66,7 +67,6 @@ func SetSomething(ctx iris.Context) {
 			ctx.StatusCode(iris.StatusOK)
 			ctx.JSON(iris.Map{
 				"message": "OK",
-				"result":  result,
 				"code":    code,
 			})
 			utils.Log.Info("Insert SQL success")

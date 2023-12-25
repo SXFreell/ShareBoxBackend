@@ -41,9 +41,10 @@ func GetSomething(ctx iris.Context) {
 		var code string
 		var content string
 		var expires int
+		var pickupCount int
 		var createTime string
 		var updateTime string
-		err := result.Scan(&id, &uid, &code, &content, &expires, &createTime, &updateTime)
+		err := result.Scan(&id, &uid, &code, &content, &expires, &pickupCount, &createTime, &updateTime)
 		if err != nil {
 			ctx.StatusCode(iris.StatusInternalServerError)
 			ctx.JSON(iris.Map{

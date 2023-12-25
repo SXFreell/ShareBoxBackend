@@ -9,13 +9,15 @@ type SetReq struct {
 }
 
 type SetTextReq struct {
-	Content string `json:"content"`
-	Expires int    `json:"expires"`
+	Content     string `json:"content"`
+	Expires     int    `json:"expires"`
+	PickupCount int    `json:"pickup_count"`
 }
 
 type SetFileReq struct {
-	Content string `json:"content"`
-	Expires int    `json:"expires"`
+	Content     string `json:"content"`
+	Expires     int    `json:"expires"`
+	PickupCount int    `json:"pickup_count"`
 }
 
 // Set Response
