@@ -25,6 +25,8 @@ var (
 	}
 )
 
+type Mapper map[string]interface{}
+
 func init() {
 	log_file, err := rotatelogs.New(
 		"./log/%Y%m%d_%H:%M:%S.log",

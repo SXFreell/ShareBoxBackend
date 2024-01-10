@@ -6,6 +6,7 @@ import (
 	"sharebox/utils"
 
 	"github.com/kataras/iris/v12"
+	"github.com/robfig/cron/v3"
 )
 
 func main() {
@@ -65,6 +66,15 @@ func main() {
 		ctx.JSON(iris.Map{"message": "Hello Iris!"})
 		utils.Log.Info("Hello Iris!", nil)
 	})
+
+	app.Get("/clear", func(ctx iris.Context) {
+		ctx.JSON(iris.Map{"message": "Hello Iris!"})
+		service.ClearExpiredFile()
+	})
+
+	c := cron.New(cron.WithSeconds())
+	c.AddFunc("45 23 1 * * *", service.ClearExpiredFile)
+	go c.Start()
 
 	app.Listen(":41250")
 }

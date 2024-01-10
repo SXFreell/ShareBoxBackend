@@ -58,9 +58,9 @@ func GetSomething(ctx iris.Context) {
 			},
 		})
 	} else {
-		ctx.StatusCode(iris.StatusNotFound)
+		ctx.StatusCode(iris.StatusOK)
 		ctx.JSON(iris.Map{
-			"code":    40401,
+			"code":    20001,
 			"message": "Not found",
 		})
 	}
