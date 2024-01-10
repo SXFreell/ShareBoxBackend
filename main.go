@@ -63,7 +63,7 @@ func main() {
 
 	app.Get("/api", func(ctx iris.Context) {
 		ctx.JSON(iris.Map{"message": "Hello Iris!"})
-		utils.Log.Info("Hello Iris!")
+		utils.Log.Info("Hello Iris!", nil)
 	})
 
 	app.Listen(":41250")

@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/kataras/iris/v12"
-	"github.com/sirupsen/logrus"
 )
 
 func SetSomething(ctx iris.Context) {
@@ -18,9 +17,7 @@ func SetSomething(ctx iris.Context) {
 		ctx.JSON(iris.Map{
 			"message": "Bad request",
 		})
-		utils.Log.WithFields(logrus.Fields{
-			"err": err,
-		}).Error("Read JSON failed")
+		utils.Log.Error("Read JSON failed", err)
 		return
 	}
 
@@ -35,9 +32,7 @@ func SetSomething(ctx iris.Context) {
 				ctx.JSON(iris.Map{
 					"message": "Internal server error",
 				})
-				utils.Log.WithFields(logrus.Fields{
-					"err": err,
-				}).Error("Select SQL failed")
+				utils.Log.Error("Select SQL failed", err)
 				return
 			} else if row.Next() {
 				row.Close()
@@ -60,9 +55,7 @@ func SetSomething(ctx iris.Context) {
 			ctx.JSON(iris.Map{
 				"message": "Internal server error",
 			})
-			utils.Log.WithFields(logrus.Fields{
-				"err": err,
-			}).Error("Insert SQL failed")
+			utils.Log.Error("Insert SQL failed", err)
 			return
 		} else {
 			ctx.StatusCode(iris.StatusOK)
@@ -70,7 +63,7 @@ func SetSomething(ctx iris.Context) {
 				"message": "OK",
 				"code":    code,
 			})
-			utils.Log.Info("Insert SQL success")
+			utils.Log.Info("Insert SQL success", nil)
 			return
 		}
 	} else {
@@ -78,9 +71,7 @@ func SetSomething(ctx iris.Context) {
 		ctx.JSON(iris.Map{
 			"message": "Bad request",
 		})
-		utils.Log.WithFields(logrus.Fields{
-			"err": err,
-		}).Error("Unknown type")
+		utils.Log.Error("Unknown type", err)
 		return
 	}
 }

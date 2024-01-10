@@ -6,7 +6,6 @@ import (
 	"sharebox/utils"
 
 	"github.com/kataras/iris/v12"
-	"github.com/sirupsen/logrus"
 )
 
 func GetSomething(ctx iris.Context) {
@@ -18,9 +17,7 @@ func GetSomething(ctx iris.Context) {
 			"code":    40001,
 			"message": "Bad request",
 		})
-		utils.Log.WithFields(logrus.Fields{
-			"err": err,
-		}).Error("Read JSON failed")
+		utils.Log.Error("Read JSON failed", err)
 		return
 	}
 	result, err := dao.QuerySQL("SELECT * FROM text WHERE code = ?", request.Code)
@@ -30,9 +27,7 @@ func GetSomething(ctx iris.Context) {
 			"code":    50001,
 			"message": "Internal server error",
 		})
-		utils.Log.WithFields(logrus.Fields{
-			"err": err,
-		}).Error("Select SQL failed")
+		utils.Log.Error("Select SQL failed", err)
 		return
 	}
 	if result.Next() {
@@ -51,9 +46,7 @@ func GetSomething(ctx iris.Context) {
 				"code":    50001,
 				"message": "Internal server error",
 			})
-			utils.Log.WithFields(logrus.Fields{
-				"err": err,
-			}).Error("Scan SQL failed")
+			utils.Log.Error("Scan SQL failed", err)
 			return
 		}
 		ctx.StatusCode(iris.StatusOK)
