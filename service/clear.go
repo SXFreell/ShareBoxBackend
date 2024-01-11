@@ -54,3 +54,10 @@ func ClearExpiredFile() {
 	// 	}
 	// }
 }
+
+func DeleteText(code string) {
+	_, err := dao.ExecSQL("DELETE FROM text WHERE code = ?", code)
+	if err != nil {
+		utils.Log.Error("删除文本出错", err)
+	}
+}

@@ -4,7 +4,6 @@ import (
 	"sharebox/dao"
 	"sharebox/model"
 	"sharebox/utils"
-	"time"
 
 	"github.com/kataras/iris/v12"
 )
@@ -22,7 +21,7 @@ func SetSomething(ctx iris.Context) {
 	}
 
 	if request.Type == "TEXT" {
-		createTime := time.Now().Format("2006-01-02 15:04:05")
+		createTime := utils.GetTimeNow()
 		var code string
 		for {
 			code = utils.GenerateCode()
